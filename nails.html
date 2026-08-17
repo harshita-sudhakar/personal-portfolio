@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Press-on gallery — Harshita Sudhakar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380;9..144,480;9..144,560&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#F5F0E5; --paper:#FBF8F1; --charcoal:#2A2621; --charcoal-soft:#645D52;
+    --green:#5E7355; --green-tint:#E6EADF; --blue:#4F6E86; --blue-tint:#E1E8EC;
+    --amber:#9C7A3C; --amber-tint:#EFE6D3; --rule:#DCD3BF;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--ivory); color:var(--charcoal); font-family:'Work Sans', sans-serif; -webkit-font-smoothing:antialiased; }
+  .label{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--charcoal-soft); }
+
+  .wrap{ max-width:960px; margin:0 auto; padding:64px 32px 100px; }
+
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; margin-bottom:36px;
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.04em;
+    color:var(--charcoal-soft); text-decoration:none;
+  }
+  .back-link:hover{ color:var(--charcoal); }
+
+  .page-head{ margin-bottom:40px; }
+  .page-head .eyebrow{ margin-bottom:10px; }
+  .page-head h1{ font-family:'Fraunces', serif; font-weight:480; font-size:32px; margin:0; }
+  .page-head p{ margin:12px 0 0; font-size:14.5px; line-height:1.65; color:var(--charcoal-soft); max-width:520px; }
+
+  .nail-grid{
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:16px;
+  }
+  .nail-grid figure{ margin:0; }
+  .nail-grid .thumb{
+    width:100%; aspect-ratio:1; background:var(--amber-tint) center/cover;
+    border:1px solid var(--rule); cursor:pointer;
+  }
+  .nail-grid figcaption{
+    margin-top:8px; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--charcoal-soft);
+  }
+
+  .empty-note{ font-size:13px; color:var(--charcoal-soft); font-style:italic; }
+
+  .lightbox{
+    display:none; position:fixed; inset:0; z-index:50;
+    background:rgba(42,38,33,0.92); align-items:center; justify-content:center; padding:40px;
+  }
+  .lightbox.open{ display:flex; }
+  .lightbox img{ max-width:100%; max-height:100%; box-shadow:0 10px 40px rgba(0,0,0,0.4); }
+  .lightbox-close{
+    position:absolute; top:20px; right:24px; width:36px; height:36px;
+    display:inline-flex; align-items:center; justify-content:center;
+    color:var(--ivory); background:transparent; border:1px solid rgba(245,240,229,0.4);
+    border-radius:50%; cursor:pointer; font-size:18px; line-height:1;
+  }
+  .lightbox-close:hover{ background:rgba(245,240,229,0.12); }
+
+  @media (max-width:600px){
+    .wrap{ padding:48px 20px 72px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <a class="back-link" href="index.html#page-hobbies">&larr; Back to portfolio</a>
+
+  <div class="page-head">
+    <div class="label eyebrow">Press-ons</div>
+    <h1>Nail gallery</h1>
+    <p>A running collection of press-on sets I've made for myself and friends.</p>
+  </div>
+
+  <div class="nail-grid" id="nail-grid"></div>
+  <p class="empty-note" id="nail-empty" style="display:none;">More sets coming soon — check back later!</p>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Close">&times;</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+(function(){
+  // add new sets here as files are dropped into the nails/ folder
+  var NAILS = [
+    { src: 'nails/set1.jpg' },
+    { src: 'nails/set2.jpg' },
+    { src: 'nails/set3.jpg' },
+    { src: 'nails/set4.jpg' },
+    { src: 'nails/set5.jpg' },
+    { src: 'nails/set6.jpg' }
+  ];
+
+  var grid = document.getElementById('nail-grid');
+  var emptyNote = document.getElementById('nail-empty');
+  var lightbox = document.getElementById('lightbox');
+  var lightboxImg = document.getElementById('lightbox-img');
+  var lightboxClose = document.getElementById('lightbox-close');
+
+  if (!NAILS.length){
+    emptyNote.style.display = 'block';
+  } else {
+    NAILS.forEach(function(item){
+      var figure = document.createElement('figure');
+      var thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      thumb.style.backgroundImage = "url('" + item.src + "')";
+      thumb.addEventListener('click', function(){
+        lightboxImg.src = item.src;
+        lightboxImg.alt = item.caption || '';
+        lightbox.classList.add('open');
+      });
+      figure.appendChild(thumb);
+      if (item.caption){
+        var caption = document.createElement('figcaption');
+        caption.textContent = item.caption;
+        figure.appendChild(caption);
+      }
+      grid.appendChild(figure);
+    });
+  }
+
+  function closeLightbox(){ lightbox.classList.remove('open'); lightboxImg.src = ''; }
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', function(e){ if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLightbox(); });
+})();
+</script>
+
+</body>
+</html>
