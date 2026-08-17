@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harshita — portfolio mockup v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,380;9..144,480;9..144,560&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ivory:#F5F0E5; --paper:#FBF8F1; --charcoal:#2A2621; --charcoal-soft:#645D52;
+    --green:#5E7355; --green-tint:#E6EADF; --blue:#4F6E86; --blue-tint:#E1E8EC;
+    --amber:#9C7A3C; --amber-tint:#EFE6D3; --rule:#DCD3BF;
+    --term-bg:#211D17; --term-text:#E9E2D0; --rail-w:76px;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--ivory); color:var(--charcoal); font-family:'Work Sans', sans-serif; -webkit-font-smoothing:antialiased; }
+  .label{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--charcoal-soft); }
+
+  .app{ display:flex; min-height:100vh; }
+
+  .rail{
+    position:sticky; top:0; height:100vh; width:var(--rail-w); flex:none;
+    display:flex; flex-direction:column; overflow-y:auto;
+    border-right:1px solid var(--rule); background:var(--paper);
+  }
+  .rail::-webkit-scrollbar{ width:0; }
+  .tab{
+    flex:none; min-height:150px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    border-top:1px solid var(--rule); cursor:pointer; background:transparent; position:relative;
+    transition:background .3s ease, box-shadow .3s ease;
+  }
+  .tab:first-of-type{ border-top:none; }
+  .tab .tab-num{ font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--charcoal-soft); opacity:.55; }
+  .tab .tab-label{ writing-mode:vertical-rl; transform:rotate(180deg); font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--charcoal-soft); transition:color .3s ease; }
+  .tab[data-accent="green"].active{ background:var(--green-tint); box-shadow:inset 3px 0 0 var(--green); }
+  .tab[data-accent="blue"].active{ background:var(--blue-tint); box-shadow:inset 3px 0 0 var(--blue); }
+  .tab[data-accent="amber"].active{ background:var(--amber-tint); box-shadow:inset 3px 0 0 var(--amber); }
+  .tab.active .tab-label{ color:var(--charcoal); }
+  .tab.contact-tab{ min-height:120px; background:var(--charcoal); }
+  .tab.contact-tab .tab-label{ color:var(--ivory); }
+  .tab.contact-tab .tab-num{ color:var(--ivory); opacity:.6; }
+  .tab.contact-tab:hover{ background:#3a352d; }
+
+  html{ scroll-behavior:smooth; }
+  .stage{ flex:1; min-width:0; }
+  .page{ padding:88px 56px 100px; max-width:720px; margin:0 auto; scroll-margin-top:24px; border-top:1px solid var(--rule); }
+  .page:first-of-type{ border-top:none; }
+  .page-head{ margin-bottom:44px; }
+  .page-head .eyebrow{ margin-bottom:10px; }
+  .page-head h1{ font-family:'Fraunces', serif; font-weight:480; font-size:32px; margin:0; }
+  .page-head p.sub{ margin:12px 0 0; font-size:14.5px; line-height:1.65; color:var(--charcoal-soft); max-width:520px; }
+
+  /* about */
+  .about-top{ display:flex; gap:32px; align-items:flex-start; margin-bottom:44px; }
+  .about-photo{ width:190px; height:190px; flex:none; background:#ccc url('harshita.JPG') center/cover; }
+  .about-bio h1{ font-family:'Fraunces', serif; font-weight:380; font-size:28px; margin:0 0 12px; line-height:1.25; }
+  .about-bio p{ font-size:15px; line-height:1.7; color:var(--charcoal-soft); margin:0; max-width:420px; }
+  .about-bio .now-line{ margin-top:14px; font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--green); }
+
+  .term-trigger{
+    display:inline-flex; align-items:center; gap:8px; margin-top:8px; margin-bottom:14px;
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.04em;
+    background:transparent; border:1px solid var(--charcoal); color:var(--charcoal);
+    padding:9px 14px; cursor:pointer; transition:background .2s ease, color .2s ease;
+  }
+  .term-trigger:hover{ background:var(--charcoal); color:var(--ivory); }
+
+  #ask-panel{ background:var(--term-bg); color:var(--term-text); font-family:'IBM Plex Mono', monospace; font-size:13px; line-height:1.7; padding:20px 22px; height:260px; overflow-y:auto; display:none; }
+  #ask-panel.open{ display:block; }
+  #ask-panel .line{ white-space:pre-wrap; word-break:break-word; margin-bottom:2px; }
+  #ask-panel .you{ color:#EFE6D3; }
+  #ask-panel .you .pc{ color:var(--green); }
+  #ask-panel .them{ color:#B9C9B4; }
+  #ask-panel .sys{ color:#8B8578; font-style:italic; }
+  #ask-panel .err{ color:#C97A5C; }
+  .ask-inputrow{ display:none; align-items:center; gap:10px; background:var(--term-bg); border-top:1px solid #3A342A; padding:12px 22px; }
+  .ask-inputrow.open{ display:flex; }
+  .ask-inputrow .pc{ color:var(--green); font-family:'IBM Plex Mono', monospace; font-size:13px; }
+  .ask-inputrow input{ flex:1; background:transparent; border:none; outline:none; color:var(--term-text); font-family:'IBM Plex Mono', monospace; font-size:13px; }
+  .ask-inputrow button{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.05em; background:transparent; color:#8B8578; border:1px solid #3A342A; padding:6px 12px; cursor:pointer; }
+
+  /* generic entry rows for experience/research/campus/hobbies */
+  .entry-row{ display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:22px 0; border-top:1px solid var(--rule); }
+  .entry-row:first-child{ border-top:none; }
+  .entry-row .t{ font-family:'Fraunces', serif; font-size:19px; }
+  .entry-row .t-line{ display:flex; align-items:baseline; gap:10px; }
+  .entry-row .t-date{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--charcoal-soft); white-space:nowrap; }
+  .entry-row .m{ white-space:nowrap; }
+  .entry-row p{ margin:8px 0 0; font-size:13.5px; color:var(--charcoal-soft); line-height:1.6; max-width:460px; }
+  .entry-row .tags{ margin-top:10px; display:flex; gap:6px; flex-wrap:wrap; }
+  .entry-row .tags span{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--charcoal-soft); border:1px solid var(--rule); padding:3px 7px; }
+  .entry-row ul.bullets{ margin:0; padding:0; max-width:460px; list-style:none; }
+  .entry-row ul.bullets li{ position:relative; padding-left:20px; font-size:13.5px; color:var(--charcoal-soft); line-height:1.65; margin-top:10px; }
+  .entry-row ul.bullets li:first-child{ margin-top:0; }
+  .entry-row ul.bullets li::before{ content:'●'; position:absolute; left:2px; top:11px; transform:translateY(-50%); font-size:8px; color:var(--blue); }
+
+  .entry-row .t-line{ display:flex; align-items:center; gap:10px; }
+  .entry-toggle{
+    display:inline-flex; align-items:center; justify-content:center; margin-left:2px;
+    width:20px; height:20px; color:var(--charcoal-soft);
+    background:none; border:none; cursor:pointer; padding:0; line-height:1;
+  }
+  .entry-toggle .chev{ display:inline-block; transition:transform .25s ease; }
+  .entry-toggle[aria-expanded="true"] .chev{ transform:rotate(180deg); }
+  .entry-detail{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .3s ease; }
+  .entry-detail.open{ grid-template-rows:1fr; }
+  .entry-detail-inner{ overflow:hidden; }
+  .entry-detail.open .entry-detail-inner{ margin-top:12px; }
+  .empty-note{ font-size:13px; color:var(--charcoal-soft); font-style:italic; }
+
+  /* now-playing / now-reading */
+  .now-block{ display:flex; align-items:center; gap:20px; padding:24px 0; border-top:1px solid var(--rule); }
+  .now-block:first-of-type{ border-top:none; }
+  .now-block .now-label{ margin-bottom:6px; }
+  .now-block .now-title{ font-family:'Fraunces', serif; font-size:17px; margin:0 0 3px; }
+  #listening-title{ text-transform:lowercase; }
+  .now-block .now-sub{ font-size:13px; color:var(--charcoal-soft); }
+
+  .vinyl{
+    position:relative; width:84px; height:84px; flex:none; border-radius:50%;
+    background:
+      repeating-radial-gradient(circle at center, #1b1815 0px, #1b1815 2px, #262019 3px, #262019 4px);
+    box-shadow:0 2px 6px rgba(0,0,0,0.18);
+    animation:spin 6s linear infinite;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .vinyl .vinyl-label{
+    width:30px; height:30px; border-radius:50%; background:#ccc url('albumcover.png') center/cover;
+    background-color:var(--amber-tint); border:1px solid var(--rule);
+  }
+  .vinyl .vinyl-hole{ position:absolute; width:5px; height:5px; border-radius:50%; background:var(--ivory); }
+  @keyframes spin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+
+  .vinyl-wrap{ position:relative; flex:none; }
+  .vinyl-wrap .note{
+    position:absolute; top:8px; right:8px; font-size:15px; color:var(--amber);
+    opacity:0; pointer-events:none; transform:translate(0,0) scale(.6); font-family:'Fraunces', serif;
+  }
+  .vinyl-wrap:hover .note{ animation:note-float 1.4s ease-out infinite; }
+  .vinyl-wrap:hover .note.n1{ animation-delay:0s; right:6px; top:10px; }
+  .vinyl-wrap:hover .note.n2{ animation-delay:.25s; right:14px; top:2px; color:var(--blue); }
+  .vinyl-wrap:hover .note.n3{ animation-delay:.5s; right:0px; top:0px; color:var(--green); }
+  .vinyl-wrap:hover .note.n4{ animation-delay:.75s; right:10px; top:14px; }
+  @keyframes note-float{
+    0%{ opacity:0; transform:translate(0,0) scale(.6) rotate(0deg); }
+    15%{ opacity:1; }
+    100%{ opacity:0; transform:translate(26px,-30px) scale(1.05) rotate(12deg); }
+  }
+
+  .book-cover{
+    width:60px; height:84px; flex:none; background:var(--blue-tint) url('') center/cover;
+    border:1px solid var(--rule); box-shadow:2px 2px 0 var(--rule);
+  }
+
+  .recs-note{ margin-top:16px; font-size:14px; color:var(--charcoal-soft); }
+
+  /* projects / router demo */
+  .router-box{ border:1px solid var(--rule); background:var(--paper); padding:22px; margin-top:16px; }
+  .router-box textarea{ width:100%; min-height:64px; resize:vertical; font-family:'Work Sans', sans-serif; font-size:14px; color:var(--charcoal); background:transparent; border:none; border-bottom:1px solid var(--rule); padding:0 0 10px; outline:none; }
+  .gauge{ margin-top:18px; }
+  .gauge-track{ position:relative; height:8px; background:var(--rule); width:100%; }
+  .gauge-zones{ position:absolute; inset:0; display:flex; }
+  .gauge-zones span{ flex:1; }
+  .gauge-marker{ position:absolute; top:-5px; width:2px; height:18px; background:var(--charcoal); left:0%; transition:left .4s cubic-bezier(.4,0,.2,1); }
+  .gauge-labels{ display:flex; justify-content:space-between; margin-top:8px; }
+  .tier-result{ margin-top:16px; display:flex; align-items:baseline; gap:12px; }
+  .tier-result .tier-name{ font-family:'Fraunces', serif; font-size:19px; }
+  .tier-name.haiku{ color:var(--green); } .tier-name.sonnet{ color:var(--blue); } .tier-name.opus{ color:var(--amber); }
+  .router-why{ margin-top:8px; font-size:12.5px; color:var(--charcoal-soft); line-height:1.6; }
+
+  /* contact */
+  .contact-form{ max-width:480px; }
+  .contact-form label{ display:block; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--charcoal-soft); margin:20px 0 8px; }
+  .contact-form label:first-of-type{ margin-top:0; }
+  .contact-form select, .contact-form input, .contact-form textarea{
+    width:100%; font-family:'Work Sans', sans-serif; font-size:14.5px; color:var(--charcoal);
+    background:var(--paper); border:1px solid var(--rule); padding:11px 12px; outline:none;
+  }
+  .contact-form textarea{ min-height:120px; resize:vertical; }
+  .contact-form button{
+    margin-top:22px; font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:0.05em;
+    background:var(--charcoal); color:var(--ivory); border:none; padding:12px 20px; cursor:pointer;
+  }
+  .contact-note{ margin-top:14px; font-size:12px; color:var(--charcoal-soft); }
+
+  @media (max-width:760px){
+    .app{ flex-direction:column; }
+    .rail{ position:sticky; top:0; width:100%; height:auto; max-height:64px; flex-direction:row; overflow-x:auto; overflow-y:hidden; }
+    .tab{ flex-direction:row; min-height:auto; min-width:110px; padding:10px 14px; }
+    .tab .tab-label{ writing-mode:horizontal-tb; transform:none; }
+    .tab.contact-tab{ min-height:auto; min-width:90px; }
+    .page{ padding:48px 22px 72px; }
+    .about-top{ flex-direction:column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <nav class="rail" id="rail">
+    <div class="tab active" data-page="about" data-accent="green"><span class="tab-num">01</span><span class="tab-label">About</span></div>
+    <div class="tab" data-page="experience" data-accent="blue"><span class="tab-num">02</span><span class="tab-label">Experience</span></div>
+    <div class="tab" data-page="research" data-accent="blue"><span class="tab-num">03</span><span class="tab-label">Research</span></div>
+    <div class="tab" data-page="projects" data-accent="amber"><span class="tab-num">04</span><span class="tab-label">Projects</span></div>
+    <div class="tab" data-page="campus" data-accent="green"><span class="tab-num">05</span><span class="tab-label">Campus</span></div>
+    <div class="tab" data-page="hobbies" data-accent="green"><span class="tab-num">06</span><span class="tab-label">Hobbies</span></div>
+    <div class="tab contact-tab" data-page="contact"><span class="tab-num">07</span><span class="tab-label">Contact</span></div>
+  </nav>
+
+  <main class="stage">
+
+    <section class="page active" id="page-about">
+      <div class="about-top">
+        <div class="about-photo"></div>
+        <div class="about-bio">
+          <h1>Harshita Sudhakar</h1>
+          <p>Hi! I'm Harshita, a CS + Math student at the University of Maryland. I'm curious by nature and enjoy digging into problems until I understand them. Ask the terminal below to learn more about me :)</p>
+          <div class="now-line"> Now - building an LLM router that picks Claude's model tier per prompt</div>
+        </div>
+      </div>
+
+      <button class="term-trigger" id="term-trigger">Open terminal — ask me anything</button>
+      <div id="ask-panel"></div>
+      <div class="ask-inputrow" id="ask-inputrow">
+        <span class="pc">&gt;</span>
+        <input id="ask-input" type="text" placeholder="ask about work, research, projects" autocomplete="off">
+        <button id="ask-send">send</button>
+      </div>
+    </section>
+
+    <section class="page" id="page-experience">
+      <div class="page-head">
+        <div class="label eyebrow">02 — Experience</div>
+        <h1>Where I've worked</h1>
+      </div>
+      <div class="entry-row"><div><div class="t-line"><span class="t">Concorde Research Technologies</span><span class="t-date">Starting Sept 2026</span></div><p class="empty-note">Details to come!</p></div></div>
+      <div class="entry-row"><div><div class="t-line"><span class="t">TestuGo</span><span class="t-date">Starting Sept 2026</span></div><p class="empty-note">Through UMD Vertically Integrated Projects, details to come!</p></div></div>
+      <div class="entry-row"><div>
+        <div class="t-line">
+          <span class="t">Torchbearer AI</span><span class="t-date">May 2026 – Aug 2026</span>
+          <button class="entry-toggle" aria-expanded="false" data-toggle="torchbearer">
+            <svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5L7 9.5L11 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="entry-detail" id="detail-torchbearer">
+          <div class="entry-detail-inner">
+            <ul class="bullets">
+              <li>Built core features for an AI-powered career coaching platform across frontend, backend, and data layer (Next.js, Supabase, Anthropic API), including streaming chat and conversation history</li>
+              <li>Designed the mentor's system-prompt architecture: persona and coaching-style rules, safety boundary handling (crisis and scope carveouts), and a configurable per-user tone/pushback layer</li>
+              <li>Implemented RAG-based memory retrieval so the mentor recalls prior user context across sessions, building on the existing conversation-history and user-notes persistence</li>
+              <li>Added text-to-speech and speech-to-text so users could hold fully spoken conversations with the mentor, not just type</li>
+              <li>Built multi-language support into the coaching flow so users could converse and receive coaching in their preferred language</li>
+            </ul>
+          </div>
+        </div>
+      </div></div>
+      <div class="entry-row"><div>
+        <div class="t-line">
+          <span class="t">Ekta</span><span class="t-date">June 2026 – present</span>
+          <button class="entry-toggle" aria-expanded="false" data-toggle="ekta">
+            <svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5L7 9.5L11 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="entry-detail" id="detail-ekta">
+          <div class="entry-detail-inner">
+            <ul class="bullets">
+              <li>Developing full-stack features for a South Asian performing arts platform in TypeScript and React, contributing to client-side UI and backend service layers</li>
+              <li>Architecting a Competition/Team Acceptance Tracking system supporting 80+ competitions and 330+ teams, streamlining acceptance notifications and enabling teams to accept or decline offers directly on the platform</li>
+              <li>Writing internal documentation for the platform's service layer and workflows, making it easier for new contributors to onboard and extend the codebase</li>
+            </ul>
+          </div>
+        </div>
+      </div></div>
+      <div class="entry-row"><div>
+        <div class="t-line">
+          <span class="t">Mitsubishi Electric</span><span class="t-date">Feb 2026 – May 2026</span>
+          <button class="entry-toggle" aria-expanded="false" data-toggle="mitsubishi">
+            <svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5L7 9.5L11 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="entry-detail" id="detail-mitsubishi">
+          <div class="entry-detail-inner">
+            <p class="empty-note" style="margin-bottom:10px;">via UMD App Dev Club</p>
+            <ul class="bullets">
+              <li>Built GoodReturn, a mobile app that streamlines the product returns process</li>
+              <li>Led a team of 4 in developing the driver-side flow, including Mapbox-based turn-by-turn navigation and driver status gating</li>
+              <li>Developed with React Native, deploying scalable cloud infrastructure using AWS CDK</li>
+            </ul>
+          </div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="page" id="page-research">
+      <div class="page-head">
+        <div class="label eyebrow">03 — Research</div>
+        <h1>What I've studied</h1>
+      </div>
+      <div class="entry-row"><div>
+        <div class="t-line">
+          <span class="t">HCI research</span><span class="t-date">Jan 2026 – present</span>
+          <button class="entry-toggle" aria-expanded="false" data-toggle="hci">
+            <svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5L7 9.5L11 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="entry-detail" id="detail-hci">
+          <div class="entry-detail-inner">
+            <ul class="bullets">
+              <li>Conducting research in human–computer interaction, studying how users interact with AI systems and keyboard-based interfaces, with a focus on human–LLM interaction and interface usability</li>
+              <li>Created clear, publication-ready diagrams visualizing system architecture and experimental study design, improving cross-team communication of complex technical concepts</li>
+              <li>Recruited and corresponded with study participants and designed structured questionnaires for data collection, ensuring study protocols were clear and consistently administered</li>
+            </ul>
+          </div>
+        </div>
+      </div></div>
+      <div class="entry-row"><div>
+        <div class="t-line">
+          <span class="t">Agentic AI / PDE research</span><span class="t-date">June 2026 – present</span>
+          <button class="entry-toggle" aria-expanded="false" data-toggle="pde">
+            <svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5L7 9.5L11 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="entry-detail" id="detail-pde">
+          <div class="entry-detail-inner">
+            <ul class="bullets">
+              <li>Extending AutoNumerics, an agentic AI framework for scientific computing, to solve industrial-scale partial differential equations</li>
+              <li>Developing neural PDE solvers and operator learning methods for high-dimensional dynamical systems and inverse problems, prioritizing numerical accuracy</li>
+              <li>Working to make these methods more efficient and as reliable as current industry-standard PDE solvers</li>
+            </ul>
+          </div>
+        </div>
+      </div></div>
+    </section>
+
+    <section class="page" id="page-projects">
+      <div class="page-head">
+        <div class="label eyebrow">04 — Projects</div>
+        <h1>Things I've built</h1>
+      </div>
+
+      <div class="entry-row"><div>
+        <div class="t-line">
+          <span class="t">LLM router</span><span class="t-date">August 2026</span>
+          <button class="entry-toggle" aria-expanded="true" data-toggle="llm-router">
+            <svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5L7 9.5L11 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="entry-detail open" id="detail-llm-router">
+          <div class="entry-detail-inner">
+            <p>Layer that sits in front of the Anthropic API and picks the model tier per prompt. Try it below - this calls the real routing logic (escalation rules + Haiku classifier), live.</p>
+            <p class="empty-note">Heads up: the router API is on a free host that spins down when idle, so the first request after a quiet period can take 30–50s to wake up.</p>
+            <div class="router-box">
+              <textarea id="router-input" placeholder="type a prompt, e.g. 'summarize this email' or 'design a distributed cache eviction policy'"></textarea>
+              <div class="gauge">
+                <div class="gauge-track">
+                  <div class="gauge-zones"><span style="background:var(--green-tint);"></span><span style="background:var(--blue-tint);"></span><span style="background:var(--amber-tint);"></span></div>
+                  <div class="gauge-marker" id="gauge-marker"></div>
+                </div>
+                <div class="gauge-labels"><span class="label">Haiku</span><span class="label">Sonnet</span><span class="label">Opus</span></div>
+              </div>
+              <div class="tier-result"><span class="label">routed to</span><span class="tier-name haiku" id="tier-name">—</span><span class="label" id="tier-score">score 0/100</span></div>
+              <div class="router-why" id="router-why">start typing to see how it scores.</div>
+            </div>
+          </div>
+        </div>
+      </div></div>
+
+      <div class="entry-row"><div>
+        <div class="t-line">
+          <span class="t">Mini-redis</span><span class="t-date">July 2026</span>
+          <button class="entry-toggle" aria-expanded="false" data-toggle="mini-redis">
+            <svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5L7 9.5L11 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="entry-detail" id="detail-mini-redis">
+          <div class="entry-detail-inner">
+            <ul class="bullets">
+              <li>Built a Redis-compatible key-value store from scratch in Python with a custom RESP protocol parser, thread-per-connection concurrency, and TTL-based expiration; verified correctness against the real redis-cli client</li>
+              <li>Sustained ~70,000 ops/sec across 20 concurrent client connections in a custom benchmark hammering the server with a mixed SET/GET/INCR workload</li>
+              <li>Hand-written incremental RESP parser that handles partial/fragmented TCP reads, buffering incomplete frames and resuming parsing as more bytes arrive rather than assuming one recv() equals one command</li>
+              <li>Dual expiration strategy — lazy checks on every read plus a background reaper thread doing active sweeps on an interval — the same pattern real Redis uses to avoid unbounded memory growth from keys nobody reads again</li>
+            </ul>
+          </div>
+        </div>
+      </div></div>
+
+      <div class="entry-row"><div>
+        <div class="t-line">
+          <span class="t">SkillSwap</span><span class="t-date">June 2025</span>
+          <button class="entry-toggle" aria-expanded="false" data-toggle="skillswap">
+            <svg class="chev" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 5.5L7 9.5L11 5.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div class="entry-detail" id="detail-skillswap">
+          <div class="entry-detail-inner">
+            <ul class="bullets">
+              <li>Built a full-stack peer-to-peer skill exchange platform</li>
+              <li>Implemented secure user authentication with bcrypt password hashing and session-based access control</li>
+              <li>Developed RESTful APIs and a MySQL schema supporting CRUD operations across user profiles and skill listings, enabling scalable data management</li>
+            </ul>
+          </div>
+        </div>
+      </div></div>
+
+      <div class="entry-row"><div><div class="t">More coming</div><p class="empty-note">—</p></div></div>
+    </section>
+
+    <section class="page" id="page-campus">
+      <div class="page-head">
+        <div class="label eyebrow">05 — Campus involvement</div>
+        <h1>Outside the classroom</h1>
+      </div>
+      <div class="entry-row"><div><div class="t">Technica</div><p>Food sponsorship organizer for UMD's hackathon for underrepresented genders.</p></div><div class="label m"></div></div>
+      <div class="entry-row"><div><div class="t">Maryland Mayuri</div><p>Sponsorship chair for a non-profit organization at the University of Maryland, College Park.</p></div><div class="label m"></div></div>
+    </section>
+
+    <section class="page" id="page-hobbies">
+      <div class="page-head">
+        <div class="label eyebrow">06 — Hobbies</div>
+        <h1>Off the clock</h1>
+      </div>
+      <div class="entry-row"><div><div class="t">Baking / cooking</div><p class="empty-note">I love to bake and cook for my family! My best items are foccaccia, pasta salad, and brookies.</p></div><div class="label m">—</div></div>
+      <div class="entry-row"><div><div class="t">Press-ons</div><p class="empty-note">I recently got into making press-on sets for me and my friends! Feel free to view some of the sets I've made.</p></div><div class="label m">view gallery →</div></div>
+
+      <div class="now-block">
+        <div class="vinyl-wrap">
+          <div class="vinyl" id="vinyl-spin"><div class="vinyl-label" id="vinyl-cover"></div></div>
+          <span class="note n1">♪</span>
+          <span class="note n2">♫</span>
+          <span class="note n3">♬</span>
+          <span class="note n4">♩</span>
+        </div>
+        <div>
+          <div class="label now-label">Currently listening to</div>
+          <div class="now-title" id="listening-title">expectations</div>
+          <div class="now-sub" id="listening-artist">Olivia Rodrigo</div>
+        </div>
+      </div>
+
+      <div class="now-block">
+        <div class="book-cover" id="book-cover"></div>
+        <div>
+          <div class="label now-label">Currently reading</div>
+          <div class="now-title" id="reading-title">—</div>
+          <div class="now-sub" id="reading-author">book cover coming soon</div>
+        </div>
+      </div>
+
+      <div class="recs-note">Feel free to give me recommendations for all of these :)</div>
+    </section>
+
+    <section class="page" id="page-contact">
+      <div class="page-head">
+        <div class="label eyebrow">07 — Contact</div>
+        <h1>Get in touch</h1>
+        <p class="sub">Pick where you'd like this to land.</p>
+      </div>
+      <div class="contact-form">
+        <label>Send to</label>
+        <select id="contact-route">
+          <option value="personal">harshita.sudhakar@gmail.com</option>
+          <option value="school">harsudha@terpmail.umd.edu</option>
+        </select>
+        <label>Your email</label>
+        <input type="email" placeholder="you@example.com">
+        <label>Message</label>
+        <textarea placeholder="What's up?"></textarea>
+        <button id="contact-send">Send message</button>
+        <div class="contact-note">This needs a form backend (Formspree or similar) to actually deliver — a static site can't send mail on its own.</div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.tab');
+  var pages = document.querySelectorAll('.page');
+  var tabsByPage = {};
+  tabs.forEach(function(tab){ tabsByPage[tab.dataset.page] = tab; });
+
+  tabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      var target = document.getElementById('page-' + tab.dataset.page);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  var spyObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (!entry.isIntersecting) return;
+      var pageId = entry.target.id.replace('page-', '');
+      var tab = tabsByPage[pageId];
+      if (!tab) return;
+      tabs.forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+    });
+  }, { root: null, rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+  pages.forEach(function(page){ spyObserver.observe(page); });
+
+  document.querySelectorAll('.entry-toggle').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var detail = document.getElementById('detail-' + btn.dataset.toggle);
+      if (!detail) return;
+      var open = detail.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  });
+
+  var FACTS = [
+    { keys: ['school', 'study', 'major', 'umd', 'maryland', 'college', 'university', 'student'],
+      answer: "Harshita is a sophomore studying computer science and mathematics at the University of Maryland." },
+    { keys: ['ekta'],
+      answer: "Harshita works as a full-stack developer at Ekta, a South Asian performing arts platform, building features in TypeScript and React across the client UI and backend service layers. She architected a Competition/Team Acceptance Tracking system supporting 80+ competitions and 330+ teams, and writes internal documentation for the platform's service layer." },
+    { keys: ['torchbearer', 'career coach', 'coaching'],
+      answer: "At Torchbearer AI, Harshita built core features for an AI-powered career coaching platform (Next.js, Supabase, Anthropic API), including streaming chat, conversation history, and the mentor's system-prompt architecture. She also added RAG-based memory retrieval, text-to-speech / speech-to-text, and multi-language support." },
+    { keys: ['mitsubishi', 'goodreturn', 'app dev club', 'mapbox'],
+      answer: "Through UMD's App Dev Club, Harshita worked with Mitsubishi Electric on GoodReturn, a mobile app that streamlines product returns. She led a team of 4 on the driver-side flow, including Mapbox-based turn-by-turn navigation, built with React Native and deployed with AWS CDK." },
+    { keys: ['concorde'],
+      answer: "Harshita is starting at Concorde Research Technologies in September 2026 — more details to come as that role kicks off." },
+    { keys: ['testugo'],
+      answer: "Harshita is starting with TestuGo in September 2026 through UMD's Vertically Integrated Projects program — more details to come." },
+    { keys: ['hci', 'human-computer', 'human computer', 'usability', 'questionnaire', 'participant'],
+      answer: "Harshita conducts HCI research at UMD focused on human-LLM interaction and interface usability, including keyboard-based interfaces. Her work includes publication-ready system-architecture and study-design diagrams, plus recruiting study participants and designing structured questionnaires for data collection." },
+    { keys: ['pde', 'partial differential', 'agentic ai', 'autonumerics', 'neural pde', 'operator learning'],
+      answer: "Harshita's agentic AI / PDE research extends AutoNumerics, an agentic AI framework for scientific computing, to solve industrial-scale partial differential equations. She's developing neural PDE solvers and operator learning methods for high-dimensional systems, aiming to make them as efficient and reliable as current industry-standard solvers." },
+    { keys: ['router', 'llm router', 'model tier', 'haiku', 'sonnet', 'opus'],
+      answer: "Harshita built an LLM router — a layer in front of the Anthropic API that picks the model tier (Haiku/Sonnet/Opus) per prompt using escalation rules plus a Haiku classifier. There's a live demo of it on the Projects page." },
+    { keys: ['mini-redis', 'mini redis', 'redis'],
+      answer: "Mini-redis is a Redis-compatible key-value store Harshita built from scratch in Python, with a custom incremental RESP parser (handling fragmented TCP reads), thread-per-connection concurrency, and a dual lazy-plus-reaper expiration strategy. It sustained ~70,000 ops/sec across 20 concurrent connections in benchmarks." },
+    { keys: ['skillswap'],
+      answer: "SkillSwap is a full-stack peer-to-peer skill exchange platform Harshita built, with bcrypt-based authentication, session-based access control, and RESTful APIs backed by a MySQL schema for user profiles and skill listings." },
+    { keys: ['technica', 'mayuri', 'campus', 'club', 'extracurricular'],
+      answer: "On campus, Harshita is the food sponsorship organizer for Technica, UMD's hackathon for underrepresented genders, and sponsorship chair for Maryland Mayuri." },
+    { keys: ['hobby', 'hobbies', 'baking', 'cooking', 'press-on', 'press on', 'listening', 'reading', 'music', 'book'],
+      answer: "Outside of work, Harshita bakes and cooks — foccaccia, pasta salad, and brookies are her specialties — and makes press-on nail sets for herself and friends." },
+    { keys: ['contact', 'email', 'reach', 'hire', 'linkedin'],
+      answer: "The best way to reach Harshita is through the Contact page on this site, where you can send a message directly." }
+  ];
+  var FALLBACK_ANSWER = "Don't have that on hand — try browsing the rest of the site, or reach out through the Contact page.";
+
+  var trigger = document.getElementById('term-trigger');
+  var panel = document.getElementById('ask-panel');
+  var inputRow = document.getElementById('ask-inputrow');
+  var input = document.getElementById('ask-input');
+  var sendBtn = document.getElementById('ask-send');
+  var busy = false;
+  var opened = false;
+
+  function addLine(text, cls){
+    var div = document.createElement('div');
+    div.className = 'line ' + cls;
+    div.textContent = text;
+    panel.appendChild(div);
+    panel.scrollTop = panel.scrollHeight;
+  }
+
+  var started = false;
+
+  trigger.addEventListener('click', function(){
+    if (opened){
+      opened = false;
+      panel.classList.remove('open');
+      inputRow.classList.remove('open');
+      trigger.textContent = 'Open terminal — ask me anything';
+      return;
+    }
+    opened = true;
+    panel.classList.add('open');
+    inputRow.classList.add('open');
+    trigger.textContent = 'Close terminal';
+    if (!started){
+      started = true;
+      addLine('session started. ask about work, research, or projects.', 'sys');
+    }
+    input.focus();
+  });
+
+  function findAnswer(question){
+    var q = question.toLowerCase();
+    for (var i = 0; i < FACTS.length; i++){
+      var fact = FACTS[i];
+      for (var j = 0; j < fact.keys.length; j++){
+        if (q.indexOf(fact.keys[j]) !== -1) return fact.answer;
+      }
+    }
+    return FALLBACK_ANSWER;
+  }
+
+  function ask(question){
+    if (!question || !question.trim() || busy) return;
+    busy = true;
+    input.value = '';
+    var youLine = document.createElement('div');
+    youLine.className = 'line you';
+    youLine.innerHTML = '<span class="pc">&gt;</span> ' + question;
+    panel.appendChild(youLine);
+    panel.scrollTop = panel.scrollHeight;
+
+    var thinking = document.createElement('div');
+    thinking.className = 'line sys';
+    thinking.textContent = '...';
+    panel.appendChild(thinking);
+    panel.scrollTop = panel.scrollHeight;
+
+    setTimeout(function(){
+      thinking.remove();
+      addLine(findAnswer(question), 'them');
+      busy = false;
+    }, 400);
+  }
+
+  sendBtn.addEventListener('click', function(){ ask(input.value); });
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') ask(input.value); });
+
+  var routerInput = document.getElementById('router-input');
+  var marker = document.getElementById('gauge-marker');
+  var tierName = document.getElementById('tier-name');
+  var tierScore = document.getElementById('tier-score');
+  var routerWhy = document.getElementById('router-why');
+  var ROUTER_API = 'https://llm-router-api-nvbl.onrender.com/route';
+  var TIER_POS = { haiku: 15, sonnet: 50, opus: 85 };
+  var TIER_NAMES = { haiku: 'Haiku', sonnet: 'Sonnet', opus: 'Opus' };
+  var REASON_TEXT = {
+    escalation_code_generation: 'mentions code / a programming task',
+    hard_override_tool_use: 'looks like it needs a tool or API call',
+    escalation_multi_step: 'multi-step instructions (step by step, first...then)',
+    escalation_long_input: 'long prompt',
+    escalation_file_attached: 'file attached',
+    hard_override_structured_output: 'requires structured output',
+    classifier_judgment: 'judged by the Haiku classifier',
+    low_confidence_default: 'classifier was unsure — defaulted up to Opus'
+  };
+  var routerDebounce = null;
+  var routerSeq = 0;
+
+  function setGauge(tier, whyText){
+    var pos = TIER_POS[tier] || 0;
+    marker.style.left = pos + '%';
+    tierScore.textContent = tier ? 'routed to ' + TIER_NAMES[tier] : 'score —';
+    tierName.textContent = tier ? TIER_NAMES[tier] : '—';
+    tierName.className = 'tier-name ' + (tier || '');
+    routerWhy.textContent = whyText;
+  }
+
+  function updateGauge(){
+    var text = routerInput.value;
+    if (!text.trim()){
+      setGauge(null, 'start typing to see how it routes.');
+      return;
+    }
+    clearTimeout(routerDebounce);
+    routerWhy.textContent = 'routing… (can take up to 30–50s if the API has been idle)';
+    routerDebounce = setTimeout(function(){
+      var mySeq = ++routerSeq;
+      fetch(ROUTER_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: text })
+      })
+        .then(function(res){ return res.json(); })
+        .then(function(data){
+          if (mySeq !== routerSeq) return;
+          if (!data || !data.tier){ setGauge(null, 'start typing to see how it routes.'); return; }
+          var why = REASON_TEXT[data.reason] || data.reason;
+          if (data.source === 'classifier') why += ' (confidence ' + Math.round(data.confidence * 100) + '%)';
+          setGauge(data.tier, why + '.');
+        })
+        .catch(function(){
+          if (mySeq !== routerSeq) return;
+          setGauge(null, 'router API unreachable — try again in a moment.');
+        });
+    }, 400);
+  }
+  routerInput.addEventListener('input', updateGauge);
+  updateGauge();
+
+  document.getElementById('contact-send').addEventListener('click', function(e){
+    e.preventDefault();
+    addLineNoop();
+  });
+  function addLineNoop(){}
+})();
+</script>
+
+</body>
+</html>
