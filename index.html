@@ -611,10 +611,14 @@
     trigger.textContent = 'Close terminal';
     if (!started){
       started = true;
-      addLine('session started. type /help or /? for a list of all the commands.', 'sys');
+      addIntroLine();
     }
     input.focus();
   });
+
+  function addIntroLine(){
+    addLine('session started. type /help or /? for a list of all the commands.', 'sys');
+  }
 
   function findAnswer(question){
     var parts = question.trim().replace(/^\//, '').toLowerCase().split(/\s+/);
@@ -636,6 +640,7 @@
     if (question.trim().replace(/^\//, '').toLowerCase() === 'clear'){
       input.value = '';
       panel.innerHTML = '';
+      addIntroLine();
       return;
     }
 
