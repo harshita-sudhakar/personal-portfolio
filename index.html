@@ -225,7 +225,7 @@
       <div id="ask-panel"></div>
       <div class="ask-inputrow" id="ask-inputrow">
         <span class="pc">&gt;</span>
-        <input id="ask-input" type="text" placeholder="ask about work, research, projects" autocomplete="off">
+        <input id="ask-input" type="text" placeholder="/help or /? for a list of all the commands" autocomplete="off">
         <button id="ask-send">send</button>
       </div>
     </section>
@@ -511,37 +511,31 @@
     });
   });
 
-  var FACTS = [
-    { keys: ['school', 'study', 'major', 'umd', 'maryland', 'college', 'university', 'student'],
-      answer: "Harshita is a sophomore studying computer science and mathematics at the University of Maryland." },
-    { keys: ['ekta'],
-      answer: "Harshita works as a full-stack developer at Ekta, a South Asian performing arts platform, building features in TypeScript and React across the client UI and backend service layers. She architected a Competition/Team Acceptance Tracking system supporting 80+ competitions and 330+ teams, and writes internal documentation for the platform's service layer." },
-    { keys: ['torchbearer', 'career coach', 'coaching'],
-      answer: "At Torchbearer AI, Harshita built core features for an AI-powered career coaching platform (Next.js, Supabase, Anthropic API), including streaming chat, conversation history, and the mentor's system-prompt architecture. She also added RAG-based memory retrieval, text-to-speech / speech-to-text, and multi-language support." },
-    { keys: ['mitsubishi', 'goodreturn', 'app dev club', 'mapbox'],
-      answer: "Through UMD's App Dev Club, Harshita worked with Mitsubishi Electric on GoodReturn, a mobile app that streamlines product returns. She led a team of 4 on the driver-side flow, including Mapbox-based turn-by-turn navigation, built with React Native and deployed with AWS CDK." },
-    { keys: ['concorde'],
-      answer: "Harshita is starting at Concorde Research Technologies in September 2026 — more details to come as that role kicks off." },
-    { keys: ['testugo'],
-      answer: "Harshita is starting with TestuGo in September 2026 through UMD's Vertically Integrated Projects program — more details to come." },
-    { keys: ['hci', 'human-computer', 'human computer', 'usability', 'questionnaire', 'participant'],
-      answer: "Harshita conducts HCI research at UMD focused on human-LLM interaction and interface usability, including keyboard-based interfaces. Her work includes publication-ready system-architecture and study-design diagrams, plus recruiting study participants and designing structured questionnaires for data collection." },
-    { keys: ['pde', 'partial differential', 'agentic ai', 'autonumerics', 'neural pde', 'operator learning'],
-      answer: "Harshita's agentic AI / PDE research extends AutoNumerics, an agentic AI framework for scientific computing, to solve industrial-scale partial differential equations. She's developing neural PDE solvers and operator learning methods for high-dimensional systems, aiming to make them as efficient and reliable as current industry-standard solvers." },
-    { keys: ['router', 'llm router', 'model tier', 'haiku', 'sonnet', 'opus'],
-      answer: "Harshita built an LLM router — a layer in front of the Anthropic API that picks the model tier (Haiku/Sonnet/Opus) per prompt using escalation rules plus a Haiku classifier. There's a live demo of it on the Projects page." },
-    { keys: ['mini-redis', 'mini redis', 'redis'],
-      answer: "Mini-redis is a Redis-compatible key-value store Harshita built from scratch in Python, with a custom incremental RESP parser (handling fragmented TCP reads), thread-per-connection concurrency, and a dual lazy-plus-reaper expiration strategy. It sustained ~70,000 ops/sec across 20 concurrent connections in benchmarks." },
-    { keys: ['skillswap'],
-      answer: "SkillSwap is a full-stack peer-to-peer skill exchange platform Harshita built, with bcrypt-based authentication, session-based access control, and RESTful APIs backed by a MySQL schema for user profiles and skill listings." },
-    { keys: ['technica', 'mayuri', 'campus', 'club', 'extracurricular'],
-      answer: "On campus, Harshita is the food sponsorship organizer for Technica, UMD's hackathon for underrepresented genders, and sponsorship chair for Maryland Mayuri." },
-    { keys: ['hobby', 'hobbies', 'baking', 'cooking', 'press-on', 'press on', 'listening', 'reading', 'music', 'book'],
-      answer: "Outside of work, Harshita bakes and cooks — foccaccia, pasta salad, and brookies are her specialties — and makes press-on nail sets for herself and friends." },
-    { keys: ['contact', 'email', 'reach', 'hire', 'linkedin'],
-      answer: "The best way to reach Harshita is through the Contact page on this site, where you can send a message directly." }
-  ];
-  var FALLBACK_ANSWER = "Don't have that on hand — try browsing the rest of the site, or reach out through the Contact page.";
+  var WHATIS = {
+    //concorderesearchtechnologies: "[add description of what you did at Concorde]",
+    torchbearerai: "An AI-powered career coaching platform that remembers more than just facts about the user. It remembers the users way of thinking and functioning, serving as an on-demand career mentor. Currently, it has a law-student pack and a CS-student pack, enabling students from either field to prepare for interviews and come in confidently.",
+    mitsubishielectric: "Through App Dev Club @ UMD, I worked on GoodReturn, an app that streamlines the return process. Customers can return packages of various sizes and leave it out on their doorstep for drivers to arrive, pick it up, and return it to the appropriate carrier.",
+    ekta: "Ekta is a common application platform for various South Asian Performing Arts circuits. It simplifies the application, decision, and information management for collegiate teams and circuits across the country.",
+    testugo: "A real-time, location-based campus app that guides students and visitors through personalized tours, event alerts, and follow-ups based on their interests, using location data to power features like major-based campus tours and proximity alerts for nearby events. Currently in prototyping: building out sensor tech, data collection design, and field testing, with room for students to shape future use cases."
+  };
+
+  var COMMANDS = {
+    whoami: "I'm Harshita, a CS + Math student at the University of Maryland. I’m from New Jersey (the best state, might I say!) and came to UMD for my undergrad! I’m passionate about building technology that positively impacts people and businesses, whether directly or indirectly.",
+    now: "I am currently building an LLM router that picks Claude's model tier per prompt. I am also working as a part-time SWE intern @ Concorde Research Technologies.",
+    education: "Bachelors of Science in Computer Science and Math. Expected graduation is May 2028. Completed coursework in object oriented programming, discrete math, operating systems, and more! Currently taking algorithms and organization of programming languages.",
+    experience: "Concorde Research Technologies - since Sept 2026\nTestuGo (UMD Vertically Integrated Projects) - since Sept 2026\nTorchbearer AI - May 2026 to Aug 2026\nEkta - June 2026 to present\nMitsubishi (via UMD App Dev Club) - Feb 2026 to May 2026\ntype /whatis [name] for details on any of these",
+    research: "HCI research - Jan 2026 to present\nAgentic AI / PDE research - June 2026 to present",
+    projects: "LLM Router - a routing layer that picks Claude's model tier per prompt. Try it live on the Projects page.\nMini-redis\nSkillSwap - peer-to-peer skill exchange platform\nmore coming soon",
+    campus: "Technica - food sponsorship organizer\nMaryland Mayuri — sponsorship chair",
+    hobbies: "Baking/cooking\nPress-ons - check the gallery on the Hobbies page",
+    stack: "Languages — Java, Python, C++, C, TypeScript, SQL, HTML/CSS/JS\nFrameworks — React.js, Node.js, React Native, FastAPI, Scikit-learn, Unity, OpenCV\nAI/ML — RAG, system prompt design, MCP, agentic frameworks, neural PDE solvers, operator learning\nTools — Git, AWS, REST APIs, Android Studio, Jira\nCertified AWS AI Practitioner (AIF-C01)",
+    in10years: "In ten years, I want to be working at the intersection of people and AI, building things that matter and impact the world in any capacity. I want to keep up with the times, since the world is ever changing, and remain curious with that tendency toward life-long learning. I also want to expand my comfort zone outside of tech. Going out of my way to meet new people, make new connections and memories, and hopefully living in a new city and exploring.",
+    links: "GitHub: https://github.com/harshita-sudhakar\nLinkedIn: https://www.linkedin.com/in/harshita-sudhakar/",
+    contact: "Head to the Contact page to reach me. You can route your message to my personal or school email"
+  };
+
+  var HELP_TEXT = "Available commands:\n/whoami\n/now\n/education\n/experience\n/whatis [name]\n/research\n/projects\n/campus\n/hobbies\n/stack\n/in10years\n/links\n/contact\n/help or /?\n/clear";
+  var UNKNOWN_ANSWER = "Unknown command — type /help or /? for a list of all the commands.";
 
   var trigger = document.getElementById('term-trigger');
   var panel = document.getElementById('ask-panel');
@@ -566,7 +560,7 @@
       opened = false;
       panel.classList.remove('open');
       inputRow.classList.remove('open');
-      trigger.textContent = 'Open terminal — ask me anything';
+      trigger.textContent = 'Open terminal';
       return;
     }
     opened = true;
@@ -575,24 +569,34 @@
     trigger.textContent = 'Close terminal';
     if (!started){
       started = true;
-      addLine('session started. ask about work, research, or projects.', 'sys');
+      addLine('session started. type /help or /? for a list of all the commands.', 'sys');
     }
     input.focus();
   });
 
   function findAnswer(question){
-    var q = question.toLowerCase();
-    for (var i = 0; i < FACTS.length; i++){
-      var fact = FACTS[i];
-      for (var j = 0; j < fact.keys.length; j++){
-        if (q.indexOf(fact.keys[j]) !== -1) return fact.answer;
-      }
+    var parts = question.trim().replace(/^\//, '').toLowerCase().split(/\s+/);
+    var cmd = parts[0];
+    var arg = parts.slice(1).join(' ');
+
+    if (cmd === '?' || cmd === 'help') return HELP_TEXT;
+    if (cmd === 'whatis'){
+      if (arg && WHATIS.hasOwnProperty(arg)) return WHATIS[arg];
+      return "Usage: /whatis [name] — try one of: " + Object.keys(WHATIS).join(', ');
     }
-    return FALLBACK_ANSWER;
+    if (COMMANDS.hasOwnProperty(cmd)) return COMMANDS[cmd];
+    return UNKNOWN_ANSWER;
   }
 
   function ask(question){
     if (!question || !question.trim() || busy) return;
+
+    if (question.trim().replace(/^\//, '').toLowerCase() === 'clear'){
+      input.value = '';
+      panel.innerHTML = '';
+      return;
+    }
+
     busy = true;
     input.value = '';
     var youLine = document.createElement('div');
